@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Render'a yüklediğinde sana vereceği URL'i buraya yapıştıracaksın bro.
 // Şimdilik test ediyorsan localhost kalsın ama canlıya geçerken değiştir.
-const API_URL = "https://backend-yousef.onrender.com/api/contact"; 
+const API_URL = "https://yousefbozan-github-io.onrender.com"; 
 
 const response = await fetch(API_URL, {
     method: 'POST',
