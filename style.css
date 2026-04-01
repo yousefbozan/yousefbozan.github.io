@@ -535,3 +535,60 @@ body {
         display: none; /* Mobilde gizle (hamburger menü yapılabilir) */
     }
 }
+
+/* --- GENEL NAV-LINKS (Masaüstü Görünümü) --- */
+.nav-links {
+    display: flex;
+    gap: 2rem; /* Senin gap değerin */
+    list-style: none; /* Noktaları kaldırdık */
+    transition: 0.4s ease-in-out; /* Geçiş efekti */
+}
+
+/* --- MOBİL MENÜ BUTONU (Masaüstünde Gizli) --- */
+.mobile-menu-btn {
+    display: none; /* Masaüstünde görünmez */
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: var(--text-color); /* Batman Teması rengin */
+    z-index: 1001; /* Her şeyin üstünde dursun */
+}
+
+/* --- MOBİL TASARIM (768px Altı) --- */
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block; /* Sadece mobilde görünür */
+    }
+
+    .nav-links {
+        /* Ekranın sağından kayarak gelme ayarları */
+        position: fixed;
+        top: 0;
+        right: -100%; /* Başta ekranın dışında saklı */
+        width: 70%; /* Ekranın %70'ini kaplasın */
+        height: 100vh; /* Tam boy yükseklik */
+        background: rgba(10, 10, 10, 0.98); /* Batman Dark Mode Siyahı */
+        
+        /* Linkleri dikeyde ortalama */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        
+        z-index: 1000;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+    }
+
+    /* JavaScript 'active' class'ını eklediğinde menü içeri girer */
+    .nav-links.active {
+        right: 0; 
+    }
+
+    /* Mobilde linklerin arasındaki boşluk */
+    .nav-links li {
+        margin: 1.5rem 0;
+    }
+
+    /* Mobilde sağdaki butonu gizleyip sadece logoyu ve hamburgeri bırakıyoruz */
+    .nav-actions {
+        display: none; 
+    }
+}
