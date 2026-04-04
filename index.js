@@ -85,3 +85,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Batman Sunucusu ${PORT} portunda aktif!`);
 });
+
+// Batman v2.1: Final Deploy Check
