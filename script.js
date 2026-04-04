@@ -7,9 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Typing Effect
     const textElement = document.getElementById('typing-text');
-
     if (textElement) {
-
         const words = [
             "Scalable Backends",
             "Modern UI/UX",
@@ -22,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let isDeleting = false;
 
         function type() {
-
             const currentWord = words[wordIndex];
 
             if (isDeleting) {
@@ -32,189 +29,130 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!isDeleting && charIndex === currentWord.length) {
-
                 isDeleting = true;
                 setTimeout(type, 2000);
-
             } else if (isDeleting && charIndex === 0) {
-
                 isDeleting = false;
                 wordIndex = (wordIndex + 1) % words.length;
                 setTimeout(type, 500);
-
             } else {
-
                 setTimeout(type, isDeleting ? 50 : 120);
-
             }
-
         }
-
         type();
     }
 
 
-    // 3. CONTACT FORM (Node.js Backend)
-
+    // 3. CONTACT FORM (Node.js Backend Entegrasyonu)
     const contactForm = document.getElementById('contactForm');
     const successOverlay = document.getElementById('successOverlay');
 
     if (contactForm) {
-
         contactForm.addEventListener('submit', async (e) => {
-
             e.preventDefault();
 
             const submitBtn = document.getElementById('submitButton');
             const btnSpan = submitBtn.querySelector('span');
-
             const originalText = btnSpan.innerText;
 
+            // Buton durumunu güncelle
             btnSpan.innerText = 'Gönderiliyor...';
             submitBtn.disabled = true;
 
             const formData = {
-
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
                 message: document.getElementById('message').value
-
             };
 
             try {
+                // Şimdilik Localhost üzerinden test ediyoruz
+                const API_URL = "http://localhost:5000/api/contact"; 
 
-                // Render'a yüklediğinde sana vereceği URL'i buraya yapıştıracaksın bro.
-// Şimdilik test ediyorsan localhost kalsın ama canlıya geçerken değiştir.
-const API_URL = "https://yousefbozan-github-io.onrender.com/api/contact"; 
-
-const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(formData)
-});
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
 
                 const result = await response.json();
 
-                if (result.success) {
-
+                // Backend'den dönen response.ok ve result.success kontrolü
+                if (response.ok && result.success) {
+                    // Başarı durumunda overlay'i göster
+                    successOverlay.style.display = 'flex'; 
                     successOverlay.classList.remove('opacity-0', 'pointer-events-none');
                     successOverlay.classList.add('opacity-100', 'pointer-events-auto');
 
                     contactForm.reset();
-
                 } else {
-
-                    alert('Mesaj gönderilemedi bro.');
-
+                    alert('Hata: ' + (result.message || 'Mesaj kaydedilemedi bro, veritabanı hatası olabilir.'));
                 }
 
             } catch (error) {
-
-                console.error('Connection error:', error);
-                alert('Backend çalışmıyor olabilir bro.');
-
+                console.error('Bağlantı hatası:', error);
+                alert('Sunucuya bağlanılamadı bro! Terminalde index.js açık mı?');
             } finally {
-
+                // Her durumda butonu eski haline getir
                 btnSpan.innerText = originalText;
                 submitBtn.disabled = false;
-
             }
-
         });
-
     }
 
 });
 
-
 // 4. Overlay kapatma
 function resetForm() {
-
     const successOverlay = document.getElementById('successOverlay');
-
     if (successOverlay) {
-
+        successOverlay.style.display = 'none'; // Direkt gizle
         successOverlay.classList.add('opacity-0', 'pointer-events-none');
         successOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-
     }
-
 }
 
-
-// 5. Modal
-
+// 5. Modal Fonksiyonları
 function openModal(projectId) {
-
     const modal = document.getElementById('project-modal');
     const modalBody = document.getElementById('modal-body');
     const dataElement = document.getElementById('data-' + projectId);
 
     if (modal && modalBody && dataElement) {
-
         modalBody.innerHTML = dataElement.innerHTML;
         modal.style.display = 'flex';
-
         document.body.style.overflow = 'hidden';
-
     }
-
 }
 
 function closeModal() {
-
     const modal = document.getElementById('project-modal');
-
     if (modal) {
-
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-
     }
-
 }
 
-
 // 6. Skill Progress Animation
-
 window.onload = () => {
-
     const progressFills = document.querySelectorAll('.progress-fill');
-
     progressFills.forEach(fill => {
-
         const percent = fill.getAttribute('data-percent');
         fill.style.width = percent + '%';
-
     });
-
 };
 
-
-// 7. Navbar Scroll Effect
-
+// 7. Navbar Scroll Effect & Mobile Menu
 window.addEventListener('scroll', () => {
-
     const nav = document.querySelector('.navbar');
-
     if (nav) {
-
         if (window.scrollY > 50) {
             nav.classList.add('scrolled');
         } else {
             nav.classList.remove('scrolled');
         }
-
     }
-
 });
-
-// Sayfa yüklendiğinde Lucide ikonlarını başlat
-if (window.lucide) {
-    lucide.createIcons();
-}
 
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const navLinks = document.getElementById('nav-links');
@@ -222,35 +160,19 @@ const navLinks = document.getElementById('nav-links');
 if (mobileMenuBtn && navLinks) {
     mobileMenuBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        
-        // Menüyü aç/kapat
         navLinks.classList.toggle('active');
+        mobileMenuBtn.classList.toggle('active');
         
-        // İkonu değiştir
         const icon = mobileMenuBtn.querySelector('i');
-        if (icon) {
-            const isOpened = navLinks.classList.contains('active');
-            icon.setAttribute('data-lucide', isOpened ? 'x' : 'menu');
-            
-            if (window.lucide) {
-                lucide.createIcons();
-            }
+        if (icon && !mobileMenuBtn.classList.contains('active')) {
+             // İkon değişimi logic buraya gelebilir
         }
-        
-        console.log("Butona tıklandı, menü durumu:", navLinks.classList.contains('active'));
     });
 
-    // Menüdeki bir linke tıklandığında menüyü kapat
     document.querySelectorAll('.nav-links a').forEach(link => {
         link.addEventListener('click', () => {
             navLinks.classList.remove('active');
-            const icon = mobileMenuBtn.querySelector('i');
-            if (icon) {
-                icon.setAttribute('data-lucide', 'menu');
-                if (window.lucide) {
-                    lucide.createIcons();
-                }
-            }
+            mobileMenuBtn.classList.remove('active');
         });
     });
 }
