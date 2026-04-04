@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -28,55 +27,34 @@ const contactSchema = new mongoose.Schema({
 });
 const Contact = mongoose.model('Contact', contactSchema);
 
-// --- 4. Nodemailer (Stabilizasyon Ayarı) ---
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, 
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false 
-    }
-});
-
-// --- 5. API Endpoint ---
+// --- 4. API Endpoint (Sadece DB Kaydı) ---
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
 
     try {
-        // A. Veritabanına Kaydet
+        // Veritabanına Kaydet
         const newContact = new Contact({ name, email, message });
         await newContact.save();
-        console.log("💾 Veri DB'ye yazıldı.");
+        
+        console.log(`💾 Yeni Mesaj Geldi: ${name} (DB'ye yazıldı)`);
 
-        // B. Mail Gönder
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: 'ybozan183@gmail.com', 
-            subject: `🚀 Siteden Yeni Mesaj: ${name}`,
-            text: `Gönderen: ${name}\nE-posta: ${email}\n\nMesaj:\n${message}`
-        };
-
-        await transporter.sendMail(mailOptions);
-        console.log("📧 Mail kutuna uçtu!");
-
-        res.status(200).json({ success: true, message: "Mesajın her yere ulaştı bro!" });
+        // Frontend'e anında başarı dön
+        res.status(200).json({ 
+            success: true, 
+            message: "Mesajın Batman mağarasına ulaştı bro!" 
+        });
 
     } catch (error) {
-        console.error("❌ Hata oluştu:", error);
-        // Hata olsa bile DB'ye yazıldığını biliyoruz
+        console.error("❌ Hata:", error);
         res.status(500).json({ 
             success: false, 
-            message: "Hata: Mesaj kaydedildi ama mail iletilemedi bro." 
+            message: "Bir şeyler ters gitti bro." 
         });
     }
 });
 
+// --- 5. Sunucuyu Başlat ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 Batman Sunucusu ${PORT} portunda aktif!`);
 });
-// Batman v2.1 Final Check - Bu satırı unutma!
